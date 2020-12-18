@@ -2,7 +2,9 @@
 
 # ROUTES
 
-### /movies
+### Movies Main
+
+##### /movies/
 
 ```sh
 GET - /movies, Returns Array of all movies
@@ -28,4 +30,4 @@ PUT - /movies/update/:imdbID, Updates data for the movie that matches the provid
 DELETE - /movies/delete/:imdbID, Deletes movie from the movie array based on the provided imdbID
 ```
 
-#### /movies/reviews
+##### /movies/reviews
