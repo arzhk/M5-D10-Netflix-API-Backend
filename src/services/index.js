@@ -214,4 +214,23 @@ router.get("/email/catalogue", async (req, res, next) => {
   }
 });
 
+router.get("/catalogue", async (req, res, next) => {
+  try {
+    if (req.query.title) {
+      const response = await axios({
+        method: "get",
+        url: `${process.env.OMDB_BASE_URL + "/?s=" + req.query.title + process.env.OMDB_API_KEY}`,
+      });
+      const data = response.data.Search;
+      res.send(JSON.stringify(data, null, 1));
+    } else {
+      const error = errorMessage(`Title query is missing.`);
+      next(error);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
 module.exports = router;
