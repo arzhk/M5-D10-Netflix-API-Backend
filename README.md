@@ -19,3 +19,13 @@ GET - /movies/test/:imdbID, Returns the movie with the matching imdbID from the 
 ```sh
 POST - /movies/new/:imdbID, Adds new movie to the movies array using data from the OMDB API
 ```
+
+```sh
+PUT - /movies/update/:imdbID, Updates data for the movie that matches the provided imdbID
+```
+
+```sh
+DELETE - /movies/delete/:imdbID, Deletes movie from the movie array based on the provided imdbID
+```
+
+#### /movies/reviews
