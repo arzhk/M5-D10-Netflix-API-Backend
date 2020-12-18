@@ -240,4 +240,27 @@ router.post(
   }
 );
 
+router.delete("/reviews/:imdbID", async (req, res, next) => {
+  try {
+    let movies = await readFileHandler("movies.json");
+    const indexOfMovie = movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
+    if (indexOfMovie !== -1) {
+      if (req.query.review) {
+        movies[indexOfMovie].reviews = movies[indexOfMovie].reviews.filter((review) => review._id !== req.query.review);
+        writeFileHandler("movies.json", movies);
+        res.send("Review successfully deleted");
+      } else {
+        const error = errorMessage("Review query is missing.");
+        next(error);
+      }
+    } else {
+      const error = errorMessage(req.params.id, "Movie with that ID not found");
+      next(error);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
 module.exports = router;

@@ -12,18 +12,11 @@
     "imdbRating": "7.6",
     "reviews": [
       {
-        "comment": "really good",
+        "comment": "incredible",
         "rate": 5,
         "imdbID": "tt3896198",
-        "_id": "8d0rgoeickiu7nnfn",
-        "_createdAt": "2020-12-18T11:50:10.018Z"
-      },
-      {
-        "comment": "wow, amazing",
-        "rate": 5,
-        "imdbID": "tt3896198",
-        "_id": "8d0rgoeickiu7o6oi",
-        "_createdAt": "2020-12-18T11:50:34.962Z"
+        "_id": "8d0rgoerwkiu83l6u",
+        "_createdAt": "2020-12-18T12:02:33.606Z"
       }
     ]
   }
