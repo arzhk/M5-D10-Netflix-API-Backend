@@ -68,7 +68,7 @@ GET - /services/imdbsearch?id={imdbID}&year="optional"&type="optional", Returns 
 | &year= &type=                            | Returns an array containing the search information from the OMDB API based on the title provided and > filtered by both the year and type provided. |
 
 ```sh
-GET - /services/sort, Returns a sorted version of the movies array based on the query that is passed.
+GET - /services/sort?by=, Returns a sorted version of the movies array based on the query that is passed.
 ```
 
 | Query      | Return                                                   |
@@ -77,3 +77,15 @@ GET - /services/sort, Returns a sorted version of the movies array based on the 
 | ?by=title  | Sorts the movie array by the title of the movie          |
 | ?by=genre  | Sorts the movie array by the genre of the movie          |
 | ?by=year   | Sorts the movie array by the year of the movie           |
+
+```sh
+GET - /services/catalogue/export?title=, Exports a PDF containing a catalogue of movies based on the title query from the OMDB API.
+```
+
+```sh
+GET - /services/email/catalogue?title={title}&email={recipient}, Sends a copy of a catalogue based on the title query from the OMDB API to the email address from the email query.
+```
+
+```sh
+GET - /services/catalogue?title={title}, Returns catalogue of search data based on the title query
+```
