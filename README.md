@@ -56,7 +56,7 @@ DELETE - /movies/reviews/:imdbID?review=, Deletes specific review for movie spec
 GET - /services/imdbsearch?id={imdbID}&year="optional"&type="optional", Returns the search data from the OMDB API
 ```
 
-#### Can use ?id= or ?title=
+##### Can use ?id= or ?title= interchangeably
 
 | Query                                    | Return                                                                                                                                              |
 | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -66,3 +66,14 @@ GET - /services/imdbsearch?id={imdbID}&year="optional"&type="optional", Returns 
 | &year=                                   | Returns an array containing the search information from the OMDB API based on the title provided and filtered by the year provided.                 |
 | &type=                                   | Returns an array containing the search information from the OMDB API based on the title provided and filtered by the type provided.                 |
 | &year= &type=                            | Returns an array containing the search information from the OMDB API based on the title provided and > filtered by both the year and type provided. |
+
+```sh
+GET - /services/sort, Returns a sorted version of the movies array based on the query that is passed.
+```
+
+| Query      | Return                                                   |
+| ---------- | -------------------------------------------------------- |
+| ?by=rating | Sorts the movie array by the average rating of the movie |
+| ?by=title  | Sorts the movie array by the title of the movie          |
+| ?by=genre  | Sorts the movie array by the genre of the movie          |
+| ?by=year   | Sorts the movie array by the year of the movie           |
