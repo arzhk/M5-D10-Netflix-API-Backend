@@ -99,18 +99,41 @@ router.get("/test/:id", async (req, res, next) => {
 router.post("/new/:imdbID", async (req, res, next) => {
   try {
     const movies = await readFileHandler("movies.json");
-    const indexOfMovie = movies.findIndex((movie) => movie._id === req.params.imdbID);
+    const indexOfMovie = await movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
+    const response = await axios({
+      method: "get",
+      url: `${process.env.OMDB_BASE_URL + "/?i=" + req.params.imdbID + process.env.OMDB_API_KEY}`,
+    });
     if (indexOfMovie === -1) {
-      const response = await axios({
-        method: "get",
-        url: `${process.env.OMDB_BASE_URL + "/?i=" + req.params.imdbID + process.env.OMDB_API_KEY}`,
-      });
-      const newMovie = await newMovieHandler(response.data);
-      movies.push(newMovie);
-      writeFileHandler("movies.json", movies);
-      res.send(`Movie has successfully been added, ID:${req.params.imdbID}`);
+      if (response.data.imdbID !== undefined) {
+        const newMovie = await newMovieHandler(response.data);
+        movies.push(newMovie);
+        writeFileHandler("movies.json", movies);
+        res.send(`Movie has successfully been added, ID:${req.params.imdbID}`);
+      } else {
+        const error = errorMessage(req.params.imdbID, "Invalid imdbID provided, please try again.");
+        next(error);
+      }
     } else {
-      const error = errorMessage(req.params.id, "Movie/Show with that ID already exists");
+      const error = errorMessage(req.params.imdbID, "Movie/Show with that ID already exists.");
+      next(error);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.put("update/:imdbID", async (req, res, next) => {
+  try {
+    const movies = await readFileHandler("movies.json");
+    const indexOfMovie = movies.findIndex((movie) => movie._id === req.params.imdbID);
+    if (indexOfMovie !== -1) {
+    } else {
+      const error = errorMessage(
+        req.params.id,
+        "Movie/Show with that ID already exists or The ID you have provided is invalid."
+      );
       next(error);
     }
   } catch (error) {
