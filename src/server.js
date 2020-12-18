@@ -2,6 +2,7 @@ const express = require("express");
 const { join } = require("path");
 const cors = require("cors");
 const moviesRoutes = require("./movies");
+const listEndpoints = require("express-list-endpoints");
 const {
   notFoundHandler,
   unauthorizedHandler,
@@ -30,6 +31,8 @@ server.use(unauthorizedHandler);
 server.use(forbiddenHandler);
 server.use(badRequestHandler);
 server.use(catchAllHandler);
+
+console.log(listEndpoints(server));
 
 server.listen(port, () => {
   console.log("Server is running on port: ", port);
