@@ -83,9 +83,9 @@ GET - /services/catalogue/export?title=, Exports a PDF containing a catalogue of
 ```
 
 ```sh
-GET - /services/email/catalogue?title={title}&email={recipient}, Sends a copy of a catalogue based on the title query from the OMDB API to the email address from the email query.
+GET - /services/email/catalogue?title=title&email=recipient, Sends a copy of a catalogue based on the title query from the OMDB API to the email address from the email query.
 ```
 
 ```sh
-GET - /services/catalogue?title={title}, Returns catalogue of search data based on the title query
+GET - /services/catalogue?title=title, Returns catalogue of search data based on the title query
 ```
