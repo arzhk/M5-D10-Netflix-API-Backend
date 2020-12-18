@@ -2,6 +2,7 @@ const express = require("express");
 const { join } = require("path");
 const cors = require("cors");
 const moviesRoutes = require("./movies");
+const servicesRoutes = require("./services");
 const listEndpoints = require("express-list-endpoints");
 const {
   notFoundHandler,
@@ -25,6 +26,7 @@ server.use(express.json());
 server.use(loggerMiddleware);
 
 server.use("/movies", moviesRoutes);
+server.use("/services", servicesRoutes);
 
 server.use(notFoundHandler);
 server.use(unauthorizedHandler);
