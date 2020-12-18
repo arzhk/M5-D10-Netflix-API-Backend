@@ -5,7 +5,5 @@
 ### /movies
 
 ```sh
-GET - /movies
+GET - /movies, Returns Array of all movies
 ```
-
-Return: Array of all movies
