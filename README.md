@@ -17,5 +17,5 @@ GET - /movies/test/:imdbID, Returns the movie with the matching imdbID from the 
 ```
 
 ```sh
-POST - /movies/new/:imdbID, Fetches data from the OMDB API based on the imdbID and stores the required data in the movies array
+POST - /movies/new/:imdbID, Adds new movie to the movies array using data from the OMDB API
 ```
