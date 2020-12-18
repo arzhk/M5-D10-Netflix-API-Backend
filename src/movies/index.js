@@ -124,16 +124,19 @@ router.post("/new/:imdbID", async (req, res, next) => {
   }
 });
 
-router.put("update/:imdbID", async (req, res, next) => {
+router.put("/update/:imdbID", async (req, res, next) => {
   try {
     const movies = await readFileHandler("movies.json");
-    const indexOfMovie = movies.findIndex((movie) => movie._id === req.params.imdbID);
+    const indexOfMovie = movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
     if (indexOfMovie !== -1) {
+      movies[indexOfMovie] = {
+        ...movies[indexOfMovie],
+        ...req.body,
+      };
+      writeFileHandler("movies.json", movies);
+      res.send(`Movie has successfully been updated`);
     } else {
-      const error = errorMessage(
-        req.params.id,
-        "Movie/Show with that ID already exists or The ID you have provided is invalid."
-      );
+      const error = errorMessage(req.params.imdbID, "Movie/Show with that ID not found.");
       next(error);
     }
   } catch (error) {
