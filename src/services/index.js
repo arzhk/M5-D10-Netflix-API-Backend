@@ -5,6 +5,8 @@ const path = require("path");
 const { join } = require("path");
 const axios = require("axios").default;
 const pdfMake = require("pdfmake");
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const fonts = {
   Roboto: {
     normal: join(__dirname, "fonts/Roboto-Regular.ttf"),
@@ -47,22 +49,6 @@ const errorMessage = (value, message, param = "_id", url = "url") => {
   };
   err.httpStatusCode = 400;
   return err;
-};
-
-const sendEmail = async (recipient) => {
-  try {
-    const msg = {
-      to: recipient,
-      from: process.env.SENDER_EMAIL, // Use the email address or domain you verified above
-      subject: "this is a test email",
-      text: `blablablabla NEW`,
-      html: `<strong>blablabla NEW</strong>`,
-    };
-    const res = await sgMail.send(msg);
-    console.log(res);
-  } catch (e) {
-    console.log(e);
-  }
 };
 
 // ******** START OF ROUTERS
@@ -146,7 +132,6 @@ router.get("/catalogue/export", async (req, res, next) => {
         url: `${process.env.OMDB_BASE_URL + "/?s=" + req.query.title + process.env.OMDB_API_KEY}`,
       });
       const data = response.data.Search;
-      console.log(data);
       const docDefinition = {
         pageSize: "A4",
         pageMargins: [40, 60, 40, 60],
@@ -189,6 +174,38 @@ router.get("/catalogue/export", async (req, res, next) => {
       pdfDoc.end();
     } else {
       const error = errorMessage(`Title query is missing.`);
+      next(error);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.get("/email/catalogue", async (req, res, next) => {
+  try {
+    if (req.query.email) {
+      if (req.query.title) {
+        const response = await axios({
+          method: "get",
+          url: `${process.env.OMDB_BASE_URL + "/?s=" + req.query.title + process.env.OMDB_API_KEY}`,
+        });
+        const data = JSON.stringify(response.data.Search, null, 1);
+        const msg = {
+          to: req.query.email,
+          from: process.env.SENDER_EMAIL, // Use the email address or domain you verified above
+          subject: "Catalogue request",
+          text: data,
+          html: `<h2>Catalogue request</h2><h4>Searched for... ${req.query.title}</h4><pre>${data}</pre>`,
+        };
+        await sgMail.send(msg);
+        res.send("Email successfully sent");
+      } else {
+        const error = errorMessage(`Title query is missing.`);
+        next(error);
+      }
+    } else {
+      const error = errorMessage(`Email query is missing.`);
       next(error);
     }
   } catch (error) {
