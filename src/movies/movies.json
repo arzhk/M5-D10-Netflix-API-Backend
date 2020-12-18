@@ -10,6 +10,21 @@
     "poster": "https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg",
     "metascore": "67",
     "imdbRating": "7.6",
-    "reviews": []
+    "reviews": [
+      {
+        "comment": "really good",
+        "rate": 5,
+        "imdbID": "tt3896198",
+        "_id": "8d0rgoeickiu7nnfn",
+        "_createdAt": "2020-12-18T11:50:10.018Z"
+      },
+      {
+        "comment": "wow, amazing",
+        "rate": 5,
+        "imdbID": "tt3896198",
+        "_id": "8d0rgoeickiu7o6oi",
+        "_createdAt": "2020-12-18T11:50:34.962Z"
+      }
+    ]
   }
 ]

@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
+const uniqid = require("uniqid");
 const path = require("path");
 const { check, validationResult } = require("express-validator");
 const { join } = require("path");
@@ -57,19 +58,21 @@ const newMovieHandler = async (data) => {
   return newMovie;
 };
 
+// ******* MOVIES
+
 router.get("/", async (req, res, next) => {
   try {
-    res.send(readFileHandler("movies.json"));
+    res.send(await readFileHandler("movies.json"));
   } catch (error) {
     console.log(error);
     next(error);
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:imdbID", async (req, res, next) => {
   try {
-    const movies = readFileHandler("movies.json");
-    const indexOfMovie = movies.findIndex((movie) => movie._id === req.params.id);
+    const movies = await readFileHandler("movies.json");
+    const indexOfMovie = await movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
     if (indexOfMovie !== -1) {
       res.send(movies[indexOfMovie]);
     } else {
@@ -99,7 +102,7 @@ router.get("/test/:id", async (req, res, next) => {
 router.post("/new/:imdbID", async (req, res, next) => {
   try {
     const movies = await readFileHandler("movies.json");
-    const indexOfMovie = await movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
+    const indexOfMovie = movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
     const response = await axios({
       method: "get",
       url: `${process.env.OMDB_BASE_URL + "/?i=" + req.params.imdbID + process.env.OMDB_API_KEY}`,
@@ -134,7 +137,7 @@ router.put("/update/:imdbID", async (req, res, next) => {
         ...req.body,
       };
       writeFileHandler("movies.json", movies);
-      res.send(`Movie has successfully been updated`);
+      res.send(`Movie has successfully been updated.`);
     } else {
       const error = errorMessage(req.params.imdbID, "Movie/Show with that ID not found.");
       next(error);
@@ -144,5 +147,97 @@ router.put("/update/:imdbID", async (req, res, next) => {
     next(error);
   }
 });
+
+router.delete("/delete/:imdbID", async (req, res, next) => {
+  try {
+    let movies = await readFileHandler("movies.json");
+    const indexOfMovie = movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
+    if (indexOfMovie !== -1) {
+      movies = movies.filter((movie) => movie.imdbID !== req.params.imdbID);
+      writeFileHandler("movies.json", movies);
+      res.send(`Movie has successfully been deleted.`);
+    } else {
+      const error = errorMessage(req.params.imdbID, "Movie/Show with that ID not found.");
+      next(error);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+// ******* REVIEWS
+
+router.get("/reviews/:imdbID", async (req, res, next) => {
+  try {
+    const movies = await readFileHandler("movies.json");
+    const indexOfMovie = movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
+    if (indexOfMovie !== -1) {
+      if (req.query.review) {
+        const indexOfReview = await movies[indexOfMovie].reviews.findIndex((review) => review._id === req.query.review);
+        res.send(movies[indexOfMovie].reviews[indexOfReview]);
+      } else {
+        if (movies[indexOfMovie].reviews.length !== 0) {
+          res.send(movies[indexOfMovie].reviews);
+        } else {
+          res.send("No reviews found for that movie.");
+        }
+      }
+    } else {
+      const error = errorMessage(req.params.id, "Movie with that ID not found");
+      next(error);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.post(
+  "/reviews/:imdbID",
+  [
+    check("comment")
+      .isLength({ min: 5 })
+      .withMessage("Comment is too short!")
+      .exists()
+      .withMessage("Comment is missing."),
+    check("rate")
+      .isNumeric({ min: 1, max: 5 })
+      .withMessage("Please enter a number between 1 and 5.")
+      .exists()
+      .withMessage("Rating is missing."),
+  ],
+  async (req, res, next) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const err = new Error();
+        err.message = errors;
+        err.httpStatusCode = 400;
+        next(err);
+      } else {
+        let movies = await readFileHandler("movies.json");
+        const indexOfMovie = movies.findIndex((movie) => movie.imdbID === req.params.imdbID);
+        if (indexOfMovie !== -1) {
+          const newReview = {
+            ...req.body,
+            imdbID: movies[indexOfMovie].imdbID,
+            _id: uniqid(),
+            _createdAt: new Date(),
+          };
+          movies[indexOfMovie].reviews = [...movies[indexOfMovie].reviews, newReview];
+          writeFileHandler("movies.json", movies);
+          res.send("New review posted");
+        } else {
+          const error = errorMessage(req.params.id, "Movie with that ID not found");
+          next(error);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
 
 module.exports = router;
